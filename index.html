@@ -4,9 +4,9 @@
         <title><!DOCTYPE html></title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="bear-note-unique-identifier" content="BB02224D-9DAD-43C5-91CB-C18125467C14">
-        <meta name="created" content="2026-02-14T13:18:40+0100">
-        <meta name="modified" content="2026-02-14T13:18:44+0100">
+        <meta name="bear-note-unique-identifier" content="FE4E271B-EDAB-4F5F-BAA2-CB6D24E0E155">
+        <meta name="created" content="2026-02-14T13:25:11+0100">
+        <meta name="modified" content="2026-02-14T13:25:15+0100">
         <meta name="tags" content="messageContainer, letterContainer, noBtn, valentineContainer, yesBtn">
         <meta name="last device" content="iPhone">
         
@@ -198,9 +198,9 @@ font-size: 38px;<br>
 color: <span class='color' style='--data-color:#d6336c'><span class='color-marker marker'>#</span>d6336c</span>;<br>
 }</p><br>
 <p>button {<br>
-padding: 15px 35px;<br>
-font-size: 20px;<br>
-margin: 20px;<br>
+padding: 20px 45px;<br>
+font-size: 24px;<br>
+margin: 25px;<br>
 border: none;<br>
 border-radius: 40px;<br>
 cursor: pointer;<br>
@@ -223,13 +223,47 @@ border-radius: 20px;<br>
 position: absolute;<br>
 font-size: 25px;<br>
 pointer-events: none;<br>
+}</p><br>
+<p>/* Glitter */<br>
+.glitter {<br>
+position: absolute;<br>
+width: 6px;<br>
+height: 6px;<br>
+background: radial-gradient(circle, white, gold);<br>
+border-radius: 50%;<br>
+opacity: 0.9;<br>
+pointer-events: none;<br>
+}</p><br>
+<p>/* SHAKE pulsante NO */<br>
+@keyframes shake {<br>
+0% { transform: translateX(0); }<br>
+20% { transform: translateX(-8px); }<br>
+40% { transform: translateX(8px); }<br>
+60% { transform: translateX(-6px); }<br>
+80% { transform: translateX(6px); }<br>
+100% { transform: translateX(0); }<br>
+}</p><br>
+<p>.shake {<br>
+animation: shake 0.4s ease;<br>
+}</p><br>
+<p>/* SCHERMO CHE TREMA */<br>
+@keyframes screenShake {<br>
+0% { transform: translate(0, 0); }<br>
+20% { transform: translate(-10px, 5px); }<br>
+40% { transform: translate(10px, -5px); }<br>
+60% { transform: translate(-8px, 4px); }<br>
+80% { transform: translate(8px, -4px); }<br>
+100% { transform: translate(0, 0); }<br>
+}</p><br>
+<p>.screen-shake {<br>
+animation: screenShake 0.4s ease;<br>
 }<br>
 </style></p></head>
 <body>
 <br>
 <!-- LETTERA -->
 <div id="letterContainer">
-    <div class="letter">Per Delia</div>
+    <div class="letter"><i>Per Delia</i></div>
 </div>
 <br>
 <!-- MESSAGGIO VALENTINE -->
@@ -258,17 +292,31 @@ let noClicks = 0;
 letterContainer.addEventListener("click", () => {
     letter.classList.add("opened");
     setTimeout(() => {
-        letterContainer.style.display = "none"; // nasconde lettera
-        valentineContainer.style.display = "block"; // mostra messaggio
+        letterContainer.style.display = "none";
+        valentineContainer.style.display = "block";
     }, 500);
 });
 
 // PULSANTE NO
 noBtn.addEventListener("click", () => {
     noClicks++;
-    yesBtn.style.transform = `scale(${1 + noClicks * 0.2})`;
-    noBtn.style.transform = `scale(${Math.max(0.5, 1 - noClicks * 0.1)})`;
-    if (noClicks >= 5) noBtn.style.display = "none";
+
+    // Shake pulsante
+    noBtn.classList.add("shake");
+    setTimeout(() => noBtn.classList.remove("shake"), 400);
+
+    // Shake schermo
+    document.body.classList.add("screen-shake");
+    setTimeout(() => document.body.classList.remove("screen-shake"), 400);
+
+    // Cresce YES e rimpicciolisce NO
+    yesBtn.style.transform = `scale(${1 + noClicks * 0.25})`;
+    noBtn.style.transform = `scale(${Math.max(0.4, 1 - noClicks * 0.15)})`;
+
+    // Dopo 5 click sparisce
+    if (noClicks >= 5) {
+        noBtn.style.display = "none";
+    }
 });
 
 // PULSANTE YES
@@ -280,33 +328,30 @@ yesBtn.addEventListener("click", () => {
     noBtn.style.display = "none";
 
     messageContainer.innerHTML = `
-        <div>Smack 🪩🌷🧡 mi manchi già</div>
+        <div>Smack Stupenda 🧡🪩🌷 mi manchi già</div>
         <img src="https://i.imgur.com/LVU5ZNN.gif" alt="Valentine GIF" class="valentine-gif">
     `;
 
     createHearts();
+    explodeHearts();
+    glitterRain();
 });
 
-// FUNZIONE CUORI
+// CUORI CHE SALGONO
 function createHearts() {
     setInterval(() => {
         const heart = document.createElement("div");
         heart.className = "heart";
         heart.innerHTML = "❤️";
 
-        // posizione casuale
         heart.style.left = Math.random() * window.innerWidth + "px";
         heart.style.top = window.innerHeight + "px";
 
-        // colore azzurro o arancione
         heart.style.color = Math.random() < 0.5 ? "#00BFFF" : "#FFA500";
-
-        // dimensione casuale
         heart.style.fontSize = (20 + Math.random() * 20) + "px";
 
         document.body.appendChild(heart);
 
-        // animazione verso l’alto con fluttuazione
         let pos = window.innerHeight;
         const amplitude = 50 + Math.random() * 30;
         const speed = 2 + Math.random() * 2;
@@ -320,12 +365,84 @@ function createHearts() {
         }
 
         requestAnimationFrame(float);
-    }, 300);
+    }, 250);
+}
+
+// CUORI ESPLOSIVI
+function explodeHearts() {
+    for (let i = 0; i < 40; i++) {
+        const heart = document.createElement("div");
+        heart.className = "heart";
+        heart.innerHTML = "💙🧡"[Math.floor(Math.random() * 2)];
+
+        heart.style.left = window.innerWidth / 2 + "px";
+        heart.style.top = window.innerHeight / 2 + "px";
+        heart.style.fontSize = (20 + Math.random() * 25) + "px";
+
+        document.body.appendChild(heart);
+
+        const angle = Math.random() * 2 * Math.PI;
+        const distance = 150 + Math.random() * 150;
+        const speed = 3 + Math.random() * 3;
+
+        let x = window.innerWidth / 2;
+        let y = window.innerHeight / 2;
+
+        function boom() {
+            x += Math.cos(angle) * speed;
+            y += Math.sin(angle) * speed;
+
+            heart.style.left = x + "px";
+            heart.style.top = y + "px";
+
+            if (Math.abs(x - window.innerWidth / 2) < distance &&
+                Math.abs(y - window.innerHeight / 2) < distance) {
+                requestAnimationFrame(boom);
+            } else {
+                heart.remove();
+            }
+        }
+
+        requestAnimationFrame(boom);
+    }
+}
+
+// GLITTER CHE CADONO
+function glitterRain() {
+    setInterval(() => {
+        const glitter = document.createElement("div");
+        glitter.className = "glitter";
+
+        glitter.style.left = Math.random() * window.innerWidth + "px";
+        glitter.style.top = "-10px";
+
+        glitter.style.opacity = Math.random();
+        glitter.style.transform = `scale(${0.5 + Math.random()})`;
+
+        document.body.appendChild(glitter);
+
+        let pos = -10;
+        const speed = 2 + Math.random() * 3;
+
+        function fall() {
+            pos += speed;
+            glitter.style.top = pos + "px";
+
+            if (pos < window.innerHeight + 20) {
+                requestAnimationFrame(fall);
+            } else {
+                glitter.remove();
+            }
+        }
+
+        requestAnimationFrame(fall);
+    }, 120);
 }
 </script>
 <br>
 </body>
 </html>
+
         </div>
     </body>
 </html>
