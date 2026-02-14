@@ -4,9 +4,9 @@
         <title><!DOCTYPE html></title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="bear-note-unique-identifier" content="B0F71CC5-0E28-4AD9-AE6B-3F2772A3A1C4">
-        <meta name="created" content="2026-02-14T13:11:39+0100">
-        <meta name="modified" content="2026-02-14T13:11:45+0100">
+        <meta name="bear-note-unique-identifier" content="BB02224D-9DAD-43C5-91CB-C18125467C14">
+        <meta name="created" content="2026-02-14T13:18:40+0100">
+        <meta name="modified" content="2026-02-14T13:18:44+0100">
         <meta name="tags" content="messageContainer, letterContainer, noBtn, valentineContainer, yesBtn">
         <meta name="last device" content="iPhone">
         
@@ -167,7 +167,6 @@ body {
 <span class='hashtag'><span class='hashtag-marker marker'>#</span>letterContainer</span> {<br>
 margin-top: 150px;<br>
 cursor: pointer;<br>
-transition: transform 0.5s ease;<br>
 }</p><br>
 <p>.letter {<br>
 width: 250px;<br>
@@ -183,9 +182,10 @@ font-style: italic;<br>
 font-size: 28px;<br>
 color: <span class='color' style='--data-color:#d6336c'><span class='color-marker marker'>#</span>d6336c</span>;<br>
 box-shadow: 0 5px 15px <span class='color' style='--data-color:#rgba(0,0,0,0.2)'><span class='color-marker marker'>#</span>rgba(0,0,0,0.2)</span>;<br>
+transition: transform 0.5s;<br>
 }</p><br>
 <p>/* LETTERA APERTA */<br>
-.opened {<br>
+.letter.opened {<br>
 transform: rotateX(180deg);<br>
 }</p><br>
 <p>/* MESSAGGIO */<br>
@@ -254,17 +254,16 @@ const popSound = document.getElementById("popSound");
 
 let noClicks = 0;
 
-// Clic sulla lettera
+// LETTERA: clic per aprire
 letterContainer.addEventListener("click", () => {
     letter.classList.add("opened");
-    // Dopo animazione di apertura mostra il messaggio
     setTimeout(() => {
-        letterContainer.style.display = "none";
-        valentineContainer.style.display = "block";
+        letterContainer.style.display = "none"; // nasconde lettera
+        valentineContainer.style.display = "block"; // mostra messaggio
     }, 500);
 });
 
-// Pulsante No
+// PULSANTE NO
 noBtn.addEventListener("click", () => {
     noClicks++;
     yesBtn.style.transform = `scale(${1 + noClicks * 0.2})`;
@@ -272,7 +271,7 @@ noBtn.addEventListener("click", () => {
     if (noClicks >= 5) noBtn.style.display = "none";
 });
 
-// Pulsante Yes
+// PULSANTE YES
 yesBtn.addEventListener("click", () => {
     popSound.currentTime = 0;
     popSound.play();
@@ -288,19 +287,26 @@ yesBtn.addEventListener("click", () => {
     createHearts();
 });
 
-// Funzione cuori fluttuanti
+// FUNZIONE CUORI
 function createHearts() {
     setInterval(() => {
         const heart = document.createElement("div");
         heart.className = "heart";
         heart.innerHTML = "❤️";
+
+        // posizione casuale
         heart.style.left = Math.random() * window.innerWidth + "px";
         heart.style.top = window.innerHeight + "px";
+
+        // colore azzurro o arancione
         heart.style.color = Math.random() < 0.5 ? "#00BFFF" : "#FFA500";
+
+        // dimensione casuale
         heart.style.fontSize = (20 + Math.random() * 20) + "px";
 
         document.body.appendChild(heart);
 
+        // animazione verso l’alto con fluttuazione
         let pos = window.innerHeight;
         const amplitude = 50 + Math.random() * 30;
         const speed = 2 + Math.random() * 2;
@@ -309,10 +315,10 @@ function createHearts() {
             pos -= speed;
             heart.style.top = pos + "px";
             heart.style.left = parseFloat(heart.style.left) + Math.sin(pos / 50) * amplitude / 20 + "px";
-
             if (pos > -50) requestAnimationFrame(float);
             else heart.remove();
         }
+
         requestAnimationFrame(float);
     }, 300);
 }
